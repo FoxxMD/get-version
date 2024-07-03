@@ -77,7 +77,7 @@ console.log(version); // 1.0.0
 
 # Configuring Version Options
 
-Pass an object implementing [`VersionOpts`](https://foxxmd.github.io/get-version/docs/interfaces/VersionOpts.html) to `getVersion`
+Pass an object implementing [`VersionOpts`](https://foxxmd.github.io/get-version/interfaces/VersionOpts.html) to `getVersion`
 
 ```ts
 import { getVersion, VersionOpts } from "@foxxmd/logging";
@@ -102,4 +102,4 @@ const version = await getVersion(opts);
 console.log(version); // 1.0.0
 ```
 
-[**Read the docs for all options**](https://foxxmd.github.io/get-version/docs/functions/getVersion.html)
+[**Read the docs for all options**](https://foxxmd.github.io/get-version/functions/getVersion.html)
