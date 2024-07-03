@@ -98,7 +98,6 @@ const opts: VersionOpts = {
     fallback: 'unknown'
 }
 
-// defaults to ENV => Git => Files => NPM => Fallback
 const version = await getVersion(opts);
 console.log(version); // 1.0.0
 ```
