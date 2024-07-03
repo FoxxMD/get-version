@@ -68,7 +68,7 @@ npm install @foxxmd/get-version
 # Quick Start
 
 ```ts
-import { getVersion } from "@foxxmd/logging";
+import { getVersion } from "@foxxmd/get-version";
 
 // defaults to ENV => Git => Files => NPM => Fallback
 const version = await getVersion();
@@ -80,7 +80,7 @@ console.log(version); // 1.0.0
 Pass an object implementing [`VersionOpts`](https://foxxmd.github.io/get-version/interfaces/VersionOpts.html) to `getVersion`
 
 ```ts
-import { getVersion, VersionOpts } from "@foxxmd/logging";
+import { getVersion, VersionOpts } from "@foxxmd/get-version";
 import path from 'node:path';
 
 const opts: VersionOpts = {
