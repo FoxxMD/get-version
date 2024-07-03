@@ -2,8 +2,7 @@
 module.exports ={
     name: "@foxxmd/get-version Docs",
     entryPoints: [
-        "./src/index.ts",
-        "./src/factory.ts"
+        "./src/index.ts"
     ],
     sort: ["source-order"],
     categorizeByGroup: false,

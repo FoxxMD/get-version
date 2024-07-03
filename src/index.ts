@@ -1,6 +1,6 @@
 import createDebug from 'debug';
 import { EnvOpts, parseEnvVersion } from "./envVersion.js";
-import { FileOpts, parseFileVersion } from "./fileVersion.js";
+import { FileOpts, AdditionalFileOptions, parseFileVersion } from "./fileVersion.js";
 import { GitOpts, parseGitVersion } from "./gitVersion.js";
 
 const debug = createDebug('get-version');
@@ -39,13 +39,12 @@ export interface VersionOpts {
 export type {
     EnvOpts,
     FileOpts,
+    AdditionalFileOptions,
     GitOpts
 }
 
 /**
  * Attempts to parse multiple sources to find a value to use as a version identifier
- *
- * @example ['1.2.3']
  * */
 export const getVersion = async (opts: VersionOpts = {}): Promise<string | undefined> => {
     const {
