@@ -1,0 +1,79 @@
+{
+  "name": "@foxxmd/get-version",
+  "version": "0.0.1",
+  "repository": "https://github.com/foxxmd/get-version",
+  "description": "Get a version identifier from multiple sources",
+  "main": "./dist/commonjs/index.js",
+  "scripts": {
+    "typedoc": "typedoc --plugin typedoc-plugin-missing-exports --plugin @8hobbies/typedoc-plugin-plausible",
+    "typedoc:watch": "typedoc --plugin typedoc-plugin-missing-exports --watch",
+    "build": "tsc",
+    "prepare": "tshy",
+    "test": "mocha --reporter spec --recursive ./tests/*.test.ts",
+    "example": "tsx example/kitchenSink.ts",
+    "screenshot": "freeze --execute \"node_modules/.bin/tsx example/kitchenSink.ts\" -c full -o \"assets/example.svg\""
+  },
+  "author": "FoxxMD",
+  "license": "MIT",
+  "private": false,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.3.0"
+  },
+  "tshy": {
+    "project": "./tsconfig.build.json",
+    "exports": {
+      "./package.json": "./package.json",
+      ".": "./src/index.js"
+    },
+    "dialects": [
+      "esm",
+      "commonjs"
+    ]
+  },
+  "devDependencies": {
+    "@8hobbies/typedoc-plugin-plausible": "^2.0.0",
+    "@types/chai": "^4.3.0",
+    "@types/chai-as-promised": "^7.1.5",
+    "@types/dateformat": "^5.0.2",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "^18.0.0",
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "dateformat": "^5.0.3",
+    "mocha": "^10.2.0",
+    "p-event": "^6.0.0",
+    "sinon": "^17.0.1",
+    "sinon-chai": "^3.7.0",
+    "ts-essentials": "^9.4.1",
+    "tshy": "^1.7.0",
+    "tsx": "^4.7.1",
+    "typedoc": "^0.26.2",
+    "typedoc-plugin-missing-exports": "^3.0.0",
+    "typescript": "^5.3.3",
+    "with-local-tmp-dir": "^5.1.1"
+  },
+  "dependencies": {
+    "@types/debug": "^4.1.12",
+    "debug": "^4.3.5",
+    "git-last-commit": "^1.0.1"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "source": "./src/index.js",
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "source": "./src/index.js",
+        "types": "./dist/commonjs/index.d.ts",
+        "default": "./dist/commonjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/commonjs/index.d.ts",
+  "type": "module",
+  "module": "./dist/esm/index.js"
+}

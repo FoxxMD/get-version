@@ -1,0 +1,6 @@
+{
+  "reporter": "dot",
+  "extension": "ts",
+  "import": "tsx/esm",
+  "exit": true
+}
