@@ -31,6 +31,9 @@
       "commonjs"
     ]
   },
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@8hobbies/typedoc-plugin-plausible": "^2.0.0",
     "@types/chai": "^4.3.0",
