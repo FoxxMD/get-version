@@ -1,6 +1,6 @@
 {
   "name": "@foxxmd/get-version",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "repository": "https://github.com/foxxmd/get-version",
   "description": "Get a version identifier from multiple sources",
   "main": "./dist/commonjs/index.js",

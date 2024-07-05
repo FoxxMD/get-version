@@ -126,38 +126,12 @@ export const parseFileVersion = async (opts: FileOpts = {}, npmStartDir?: string
 
     if (versionData === undefined && npmPackage) {
 
-        let currDirectory = npmStartDir ?? get__filename();
-        let parentDirectory = path.dirname(currDirectory);
-        if (path.parse(parentDirectory).name === 'src') {
-            // if we are in src for development we want to go at least one more level up
-            currDirectory = parentDirectory;
-            parentDirectory = path.dirname(parentDirectory);
+        const validParentDir = getParentNodeModulesFolder(npmStartDir ?? get__filename());
+        versionData = await findFilesRecuriveParently(validParentDir);
+        if(versionData !== undefined) {
+            propName = 'version';
         }
-        // otherwise we are in node_modules as prod build and are safe to start wherever
 
-        // https://hals.app/blog/recursively-read-parent-folder-nodejs/
-        while (currDirectory !== parentDirectory) {
-
-            for (const fileName of packageFileNames) {
-                const packagePath = path.join(parentDirectory, fileName);
-                const content = await readFile(packagePath);
-                if (content !== undefined) {
-                    versionData = content;
-                    propName = 'version';
-                    debug(`Found package file at ${packagePath}`);
-                    break;
-                }
-            }
-
-            if (versionData !== undefined) {
-                break;
-            }
-
-            // The trick is here:
-            // Using path.dirname() of a directory returns the parent directory!
-            currDirectory = parentDirectory
-            parentDirectory = path.dirname(parentDirectory);
-        }
     }
 
     if (versionData !== undefined) {
@@ -170,6 +144,57 @@ export const parseFileVersion = async (opts: FileOpts = {}, npmStartDir?: string
         }
         return versionData;
     }
+}
+
+const findFilesRecuriveParently = async (fromDir: string, files: string[] = packageFileNames) => {
+
+    let currDirectory = fromDir;
+    let parentDirectory = fromDir;
+    let firstRun = true;
+
+    // https://hals.app/blog/recursively-read-parent-folder-nodejs/
+    while (firstRun || currDirectory !== parentDirectory) {
+
+        firstRun = false;
+
+        for (const fileName of packageFileNames) {
+            const packagePath = path.join(parentDirectory, fileName);
+            const content = await readFile(packagePath);
+            if (content !== undefined) {
+                debug(`Found package file at ${packagePath}`);
+                return content;
+            }
+        }
+
+        // The trick is here:
+        // Using path.dirname() of a directory returns the parent directory!
+        currDirectory = parentDirectory
+        parentDirectory = path.dirname(parentDirectory);
+    }
+
+    return undefined;
+}
+
+const getParentNodeModulesFolder = (fromDir: string) => {
+
+    let currentDirectory = fromDir;
+    if(path.parse(currentDirectory).name === 'node_modules') {
+        // get parent
+        return path.dirname(currentDirectory);
+    }
+
+    let parentDirectory = path.dirname(currentDirectory);
+
+    while(currentDirectory !== parentDirectory) {
+        if(path.parse(parentDirectory).name === 'node_modules') {
+            return path.dirname(parentDirectory);
+        }
+
+        currentDirectory = parentDirectory;
+        parentDirectory = path.dirname(parentDirectory);
+    }
+
+    return fromDir;
 }
 
 /**

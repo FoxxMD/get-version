@@ -13,6 +13,7 @@ import { getVersion } from "../src/index.js";
 const envTestPropNames = ['APP_VERSION'];
 
 const versionFileJson = {version: '1.2.3'};
+const versionNMFileJson = {version: '0.0.1'};
 const versionFileOtherPropJson = {nested: {version: '4.5.6'}};
 const textVersion = '8.9.0';
 
@@ -94,6 +95,19 @@ describe('Files', function () {
                 await fs.writeFile(path.join(process.cwd(), 'package.json'), JSON.stringify(versionFileJson));
 
                 const data = await parseFileVersion(undefined, childFolder2);
+                expect(data).is.eq('1.2.3');
+            });
+        });
+
+        it('Walks up to node_modules folder', async function () {
+            await withLocalTmpDir(async () => {
+                const nmPackageFolder = path.join(process.cwd(), 'node_modules', '@foxxmd', 'get-version');
+                const startFolder = path.join(nmPackageFolder, 'dist', 'esm');
+                await fs.mkdir(startFolder, { recursive: true });
+                await fs.writeFile(path.join(nmPackageFolder, 'package.json'), JSON.stringify(versionNMFileJson));
+                await fs.writeFile(path.join(process.cwd(), 'package.json'), JSON.stringify(versionFileJson));
+
+                const data = await parseFileVersion(undefined, startFolder);
                 expect(data).is.eq('1.2.3');
             });
         });
