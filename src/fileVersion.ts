@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import createDebug from 'debug';
-import { filename } from 'dirname-filename-esm';
+import { fileURLToPath } from 'url'
 
 const debug = createDebug('get-version:file');
 
@@ -126,8 +126,8 @@ export const parseFileVersion = async (opts: FileOpts = {}, npmStartDir?: string
 
     if (versionData === undefined && npmPackage) {
 
-        let currDirectory = npmStartDir ?? filename(import.meta);
-        let parentDirectory = path.dirname(npmStartDir ?? filename(import.meta));
+        let currDirectory = npmStartDir ?? get__filename();
+        let parentDirectory = path.dirname(currDirectory);
         if (path.parse(parentDirectory).name === 'src') {
             // if we are in src for development we want to go at least one more level up
             currDirectory = parentDirectory;
@@ -170,4 +170,20 @@ export const parseFileVersion = async (opts: FileOpts = {}, npmStartDir?: string
         }
         return versionData;
     }
+}
+
+/**
+ * Absolute insanity to get filename/dirname cross-compatible for esm/cjs
+ *
+ * @see https://stackoverflow.com/a/75670725/1469797
+ * */
+function get__filename() {
+    const error = new Error()
+    const stack = error.stack
+    const match = stack.match(/^Error\s+at[^\r\n]+\s+at *(?:[^\r\n(]+\((.+?)(?::\d+:\d+)?\)|(.+?)(?::\d+:\d+)?) *([\r\n]|$)/)
+    const filename = match[1] || match[2]
+    if (filename.startsWith('file://')) {
+        return fileURLToPath(filename)
+    }
+    return filename
 }

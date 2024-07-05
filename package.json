@@ -59,7 +59,6 @@
   "dependencies": {
     "@types/debug": "^4.1.12",
     "debug": "^4.3.5",
-    "dirname-filename-esm": "^1.1.1",
     "git-last-commit": "^1.0.1"
   },
   "exports": {
