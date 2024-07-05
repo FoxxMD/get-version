@@ -145,7 +145,11 @@ describe('Files', function () {
 describe('Git', async function () {
 
     it('Returns undefined when Git is not present', async function () {
+        let processExecMethod;
+        processExecMethod = sinon.stub(childProcess, 'exec');
+        processExecMethod.yields(null, undefined);
         expect(await parseGitVersion()).is.undefined;
+        processExecMethod.restore();
     });
 
     describe('When Git is present', async function () {

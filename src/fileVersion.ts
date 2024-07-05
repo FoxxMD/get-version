@@ -1,6 +1,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import createDebug from 'debug';
+import { filename } from 'dirname-filename-esm';
 
 const debug = createDebug('get-version:file');
 
@@ -125,8 +126,8 @@ export const parseFileVersion = async (opts: FileOpts = {}, npmStartDir?: string
 
     if (versionData === undefined && npmPackage) {
 
-        let currDirectory = npmStartDir ?? __filename;
-        let parentDirectory = path.dirname(npmStartDir ?? __filename);
+        let currDirectory = npmStartDir ?? filename(import.meta);
+        let parentDirectory = path.dirname(npmStartDir ?? filename(import.meta));
         if (path.parse(parentDirectory).name === 'src') {
             // if we are in src for development we want to go at least one more level up
             currDirectory = parentDirectory;
