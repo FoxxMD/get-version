@@ -66,4 +66,111 @@
 </code><button type="button">Copy</button></pre>
 
 <p><a href="https://foxxmd.github.io/get-version/functions/getVersion.html"><strong>Read the docs for all options</strong></a></p>
-</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#md:foxxmdget-version"><span>@foxxmd/get-<wbr/>version</span></a><a href="#md:why"><span>Why?</span></a><ul><li><ul><li><ul><li><a href="#md:example-scenario"><span>Example <wbr/>Scenario</span></a></li></ul></li></ul></li></ul><a href="#md:install"><span>Install</span></a><a href="#md:quick-start"><span>Quick <wbr/>Start</span></a><a href="#md:configuring-version-options"><span>Configuring <wbr/>Version <wbr/>Options</span></a></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="http://foxxmd.github.io/get-version" class="tsd-nav-link">Docs</a><a href="https://github.com/foxxmd/get-version" class="tsd-nav-link">GitHub</a></nav><nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="assets/icons.svg#icon-1"></use></svg><span>@foxxmd/get-version Docs</span></a><ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="."><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
+<a id="md:recipes" class="tsd-anchor"></a><h1 class="tsd-anchor-link">Recipes<a href="#md:recipes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h1><a id="md:docker-image" class="tsd-anchor"></a><h2 class="tsd-anchor-link">Docker Image<a href="#md:docker-image" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2><p><code>get-version</code> looks for <code>APP_VERSION</code> env by default. Set <code>APP_VERSION</code> using <a href="https://stackoverflow.com/questions/39597925/how-do-i-set-environment-variables-during-the-docker-build-process/63640896#63640896">docker build arg</a> in <code>Dockerfile</code>:</p>
+<pre><code class="dockerfile">#FROM ....
+
+# then in your last build stage...
+ARG APP_BUILD_VERSION
+ENV APP_VERSION=$APP_BUILD_VERSION
+
+#ENTRYPOINT ...
+</code><button type="button">Copy</button></pre>
+
+<a id="md:setting-app_version-based-on-github-actions-trigger" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Setting <code>APP_VERSION</code> based on Github Actions trigger<a href="#md:setting-app_version-based-on-github-actions-trigger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p>If you build and publish images using <a href="https://docs.github.com/en/actions">Github Actions</a> the version can be configured to use release tag, github info (without including git repo in image), or other arbitrary info.</p>
+<p>In your <a href="https://docs.github.com/en/actions/using-workflows/about-workflows">workflow</a> when using <a href="https://github.com/docker/build-push-action">build-push-action</a>:</p>
+<pre><code class="yaml"># steps:
+# ....
+    - name: Build and push Docker image
+      env:
+        APP_VERSION: myCustomAppVersionInfo
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        build-args: |
+          APP_BUILD_VERSION=${{env.APP_VERSION}}
+        # ...
+</code><button type="button">Copy</button></pre>
+
+<a id="md:use-release-tag-or-branch-commit-based-on-trigger" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Use Release Tag or branch-commit, based on trigger<a href="#md:use-release-tag-or-branch-commit-based-on-trigger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><details>
+<pre><code class="yaml">on:
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    tags:
+      - '*.*.*'
+jobs:
+  publish:
+    name: Build and Publish Image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - 
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        
+      - name: Set short git commit SHA
+        id: vars
+        # https://dev.to/hectorleiva/github-actions-and-creating-a-short-sha-hash-8b7
+        # short sha available under env.COMMIT_SHORT_SHA
+        run: |
+          calculatedSha=$(git rev-parse --short HEAD)
+          branchName=$(git rev-parse --abbrev-ref HEAD)
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "COMMIT_BRANCH=$branchName" >> $GITHUB_ENV
+
+# do whatever else you need to do...
+
+      - name: Build and push Docker image
+        env:
+          # if action triggers on release, version uses tag
+          # if action triggers on push to an included branch version is {branch}-{shortSHA}
+          APP_VERSION: ${{ contains(github.ref, 'refs/tags/') && github.ref_name || format('{0}-{1}', env.COMMIT_BRANCH, env.COMMIT_SHORT_SHA ) }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          build-args: |
+            APP_BUILD_VERSION=${{env.APP_VERSION}}
+          # ...
+</code><button type="button">Copy</button></pre>
+
+</details>
+<a id="md:use-pr-info" class="tsd-anchor"></a><h3 class="tsd-anchor-link">Use PR info<a href="#md:use-pr-info" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3><p><strong>WARNING:</strong> Do not use <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target"><code>pull_request_target</code> trigger</a> without some security measures in place to <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">prevent malicious PRs.</a></p>
+<details>
+<pre><code class="yaml">name: PR Workflow
+
+on:
+  pull_request_target:
+    types:
+      - labeled
+      - synchronize
+      - reopened
+      - opened
+    # only run if PR targets 'develop' branch for merging
+    branches:
+      - 'develop'
+jobs:
+  release-snapshot:
+    name: Release snapshot
+    runs-on: ubuntu-latest
+    # don't run job unless PR has been marked safe after manual review of changes!
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test')
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    # ...
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v5
+      env:
+        # produces version like pr152-11ec1c7c
+        APP_VERSION: ${{ format('pr{0}-{1}', github.event.number, github.event.pull_request.head.sha ) }}
+      with:
+        context: .
+        build-args: |
+          APP_BUILD_VERSION=${{env.APP_VERSION}}
+        # ...
+</code><button type="button">Copy</button></pre>
+
+</details></div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="assets/icons.svg#icon-chevronDown"></use></svg>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#md:foxxmdget-version"><span>@foxxmd/get-<wbr/>version</span></a><a href="#md:why"><span>Why?</span></a><ul><li><ul><li><ul><li><a href="#md:example-scenario"><span>Example <wbr/>Scenario</span></a></li></ul></li></ul></li></ul><a href="#md:install"><span>Install</span></a><a href="#md:quick-start"><span>Quick <wbr/>Start</span></a><a href="#md:configuring-version-options"><span>Configuring <wbr/>Version <wbr/>Options</span></a><a href="#md:recipes"><span>Recipes</span></a><ul><li><a href="#md:docker-image"><span>Docker <wbr/>Image</span></a></li><li><ul><li><a href="#md:setting-app_version-based-on-github-actions-trigger"><span>Setting APP_<wbr/>VERSION based on <wbr/>Github <wbr/>Actions trigger</span></a></li><li><a href="#md:use-release-tag-or-branch-commit-based-on-trigger"><span>Use <wbr/>Release <wbr/>Tag or branch-<wbr/>commit, based on trigger</span></a></li><li><a href="#md:use-pr-info"><span>Use PR info</span></a></li></ul></li></ul></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="http://foxxmd.github.io/get-version" class="tsd-nav-link">Docs</a><a href="https://github.com/foxxmd/get-version" class="tsd-nav-link">GitHub</a></nav><nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="assets/icons.svg#icon-1"></use></svg><span>@foxxmd/get-version Docs</span></a><ul class="tsd-small-nested-navigation" id="tsd-nav-container" data-base="."><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
