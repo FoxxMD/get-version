@@ -36,9 +36,11 @@ The problem you have is you have:
 
 and there's no _one way_ to make sure all of these instances display an accurate version unless you want to manually add/commit a Source of Truth value somewhere every time you make a change.
 
-**@foxxmd/get-version solves this problem.** By using multiple sources, in an order you define, to glean a "version identifier" you can programmatically determine the most accurate identifier to display.
+**@foxxmd/get-version solves this problem.** It parses multiple sources, in an order you define, to glean a "version identifier" that is most accurate to display based on how and from what source your app is deployed from.
 
-#### Example Scenario
+<details>
+
+<summary>Example Scenario</summary>
 
 We will look for a version from sources in this order=: ENV, Git, NPM, Fallback
 
@@ -58,6 +60,9 @@ Git not found then with NPM...
 NPM not found...
 
 * Uses `fallback` value set in project so you know user is using an uncommon setup (or something is wrong!)
+
+
+</details>
 
 # Install 
 
