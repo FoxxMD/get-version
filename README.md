@@ -103,3 +103,133 @@ console.log(version); // 1.0.0
 ```
 
 [**Read the docs for all options**](https://foxxmd.github.io/get-version/functions/getVersion.html)
+
+# Recipes
+
+## Docker Image
+
+`get-version` looks for `APP_VERSION` env by default. Set `APP_VERSION` using [docker build arg](https://stackoverflow.com/questions/39597925/how-do-i-set-environment-variables-during-the-docker-build-process/63640896#63640896) in `Dockerfile`:
+
+```dockerfile
+#FROM ....
+
+# then in your last build stage...
+ARG APP_BUILD_VERSION
+ENV APP_VERSION=$APP_BUILD_VERSION
+
+#ENTRYPOINT ...
+```
+
+### Setting `APP_VERSION` based on Github Actions trigger
+
+If you build and publish images using [Github Actions](https://docs.github.com/en/actions) the version can be configured to use release tag, github info (without including git repo in image), or other arbitrary info.
+
+In your [workflow](https://docs.github.com/en/actions/using-workflows/about-workflows) when using [build-push-action](https://github.com/docker/build-push-action):
+
+```yaml
+# steps:
+# ....
+    - name: Build and push Docker image
+      env:
+        APP_VERSION: myCustomAppVersionInfo
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        build-args: |
+          APP_BUILD_VERSION=${{env.APP_VERSION}}
+        # ...
+```
+
+### Use Release Tag or branch-commit, based on trigger
+
+<details>
+
+```yaml
+on:
+  push:
+    branches:
+      - 'master'
+      - 'develop'
+    tags:
+      - '*.*.*'
+jobs:
+  publish:
+    name: Build and Publish Image
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - 
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        
+      - name: Set short git commit SHA
+        id: vars
+        # https://dev.to/hectorleiva/github-actions-and-creating-a-short-sha-hash-8b7
+        # short sha available under env.COMMIT_SHORT_SHA
+        run: |
+          calculatedSha=$(git rev-parse --short HEAD)
+          branchName=$(git rev-parse --abbrev-ref HEAD)
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+          echo "COMMIT_BRANCH=$branchName" >> $GITHUB_ENV
+
+# do whatever else you need to do...
+
+      - name: Build and push Docker image
+        env:
+          # if action triggers on release, version uses tag
+          # if action triggers on push to an included branch version is {branch}-{shortSHA}
+          APP_VERSION: ${{ contains(github.ref, 'refs/tags/') && github.ref_name || format('{0}-{1}', env.COMMIT_BRANCH, env.COMMIT_SHORT_SHA ) }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          build-args: |
+            APP_BUILD_VERSION=${{env.APP_VERSION}}
+          # ...
+```
+
+</details>
+
+### Use PR info
+
+**WARNING:** Do not use [`pull_request_target` trigger](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target) without some security measures in place to [prevent malicious PRs.](https://securitylab.github.com/research/github-actions-preventing-pwn-requests/)
+
+<details>
+
+```yaml
+name: PR Workflow
+
+on:
+  pull_request_target:
+    types:
+      - labeled
+      - synchronize
+      - reopened
+      - opened
+    # only run if PR targets 'develop' branch for merging
+    branches:
+      - 'develop'
+jobs:
+  release-snapshot:
+    name: Release snapshot
+    runs-on: ubuntu-latest
+    # don't run job unless PR has been marked safe after manual review of changes!
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test')
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+    # ...
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v5
+      env:
+        # produces version like pr152-11ec1c7c
+        APP_VERSION: ${{ format('pr{0}-{1}', github.event.number, github.event.pull_request.head.sha ) }}
+      with:
+        context: .
+        build-args: |
+          APP_BUILD_VERSION=${{env.APP_VERSION}}
+        # ...
+```
+
+</details>
